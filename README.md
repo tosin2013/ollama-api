@@ -81,6 +81,36 @@ This directly interacts with the Backend Server hosted on VALDI.
 - `/uninstall-model`: Uninstalls a given model.
 - `/install`: Endpoint used for initial setup, installing necessary components.
 
+## CLI Usage
+The `app/ollama-api-cli.py` script provides a command-line interface to interact with the Ollama API. Below are the available commands and their usage:
+
+### Install Model
+To install a model, use the following command:
+```sh
+python app/ollama-api-cli.py install-model --model <model_name>
+```
+Replace `<model_name>` with the name of the model you want to install.
+
+### Uninstall Model
+To uninstall a model, use the following command:
+```sh
+python app/ollama-api-cli.py uninstall-model --model <model_name>
+```
+Replace `<model_name>` with the name of the model you want to uninstall.
+
+### List Models
+To list all installed models, use the following command:
+```sh
+python app/ollama-api-cli.py list-models
+```
+
+### Chat with Model
+To chat with a model, use the following command:
+```sh
+python app/ollama-api-cli.py chat --model <model_name> --message <message>
+```
+Replace `<model_name>` with the name of the model you want to chat with and `<message>` with the message you want to send.
+
 ## Credits ✨
 This project would not be possible without continous contributions from the Open Source Community.
 ### Ollama

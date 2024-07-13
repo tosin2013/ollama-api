@@ -54,6 +54,7 @@ REPO_URL="https://github.com/Dublit-Development/ollama-api"
 API_KEY="$1"
 CONFIG_FILE="./app/config.json"
 FLASK_APP="app.py"
+LOG_FILE="app.log"
 PORT=5000
 
 # Function to install dependencies
@@ -91,7 +92,8 @@ start_flask_server() {
 
     echo "Starting Flask server..."
     cd app
-    python3 $FLASK_APP &
+    nohup python3 $FLASK_APP > $LOG_FILE 2>&1 &
+    echo "Flask server started. Check $LOG_FILE for logs."
 }
 
 # Function to allow port 5000
@@ -99,6 +101,8 @@ allow_port() {
     echo "Allowing port $PORT..."
     echo "Configuring UFW..."
     yes | sudo ufw enable
+    # add ssh to ufw
+    sudo ufw allow ssh
     sudo ufw allow $PORT
     sudo ufw status
 }
