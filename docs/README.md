@@ -9,6 +9,7 @@ Before you begin, ensure you have the following:
 1. A GitHub account.
 2. The Aider tool installed on your local machine.
 3. Access to the Ollama API project repository.
+4. Ensure that the `http://localhost:11434` endpoint is accessible from other applications. This may require network configuration and firewall settings.
 
 ## Steps to Integrate
 
