@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Exit immediately if a command exits with a non-zero status
-set -e
+# set -e
 
 # Function to display usage
 usage() {
@@ -85,6 +85,8 @@ start_flask_server() {
     if [ -n "$FLASK_PID" ]; then
         echo "Stopping existing Flask server with PID $FLASK_PID..."
         kill $FLASK_PID
+    else
+        echo "No existing Flask server found."
     fi
 
     echo "Starting Flask server..."
