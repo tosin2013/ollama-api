@@ -48,21 +48,28 @@ def index():
 
 @app.route('/api/question', methods=['POST'])
 def process_question():
-    # Get the question from the request
-    data = request.get_json()
-    question = data.get('question', '')
-    model = data.get('model', '')
+    try:
+        # Get the question from the request
+        data = request.get_json()
+        question = data.get('question', '')
+        model = data.get('model', '')
 
-    # Run a command and capture the output
-    result = run_model_question(question, model)
-    print(result)
+        # Run a command and capture the output
+        result = run_model_question(question, model)
+        print(result)
 
-    # Check for errors in the result
-    if 'error' in result:
-        return jsonify({"message": result['responses'], "error": result['error']}), 500
+        # Check for errors in the result
+        if 'error' in result:
+            raise ValueError(result['error'])
 
-    # Return the result as JSON
-    return jsonify({"message": result})
+        # Return the result as JSON
+        return jsonify({"message": result})
+
+    except ValueError as ve:
+        return jsonify({"message": [], "error": str(ve)}), 500
+    except Exception as e:
+        return jsonify({"message": [], "error": "An unexpected error occurred."}), 500
+
 
 @app.route('/api/vlm', methods=['POST'])
 def vlm_model():
