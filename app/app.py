@@ -457,7 +457,7 @@ def chat():
         # Error responses will be a tuple with (response, status_code)
         return jsonify(response[0]), response[1]
 
-    return response, 200
+    return jsonify(response), 200
 
 # HANDLE A BASIC CHAT REQUEST
 @app.route('/api/llava', methods=['POST'])
