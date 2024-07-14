@@ -186,7 +186,12 @@ def run_model_question(question, model):
         app.logger.info(f"Curl command output: {output}")
 
         # Process the output as JSON
-        response_json = json.loads(output)
+        try:
+            response_json = json.loads(output)
+        except json.JSONDecodeError as e:
+            app.logger.error(f"Error decoding JSON response: {e}")
+            app.logger.error(f"Raw response: {output}")
+            return {'responses': [], 'error': str(e)}
         
         # Check for error in the response
         if 'error' in response_json:
@@ -201,9 +206,6 @@ def run_model_question(question, model):
     
     except subprocess.CalledProcessError as e:
         app.logger.error(f"Error executing curl command: {e.output}")
-        return {'responses': [], 'error': str(e)}
-    except json.JSONDecodeError as e:
-        app.logger.error(f"Error decoding JSON response: {e}")
         return {'responses': [], 'error': str(e)}
     except Exception as e:
         app.logger.error(f"Unexpected error: {e}")
