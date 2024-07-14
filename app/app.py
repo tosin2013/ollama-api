@@ -458,7 +458,10 @@ def chat():
         return jsonify(response[0]), response[1]
 
     # Ensure 'message' exists in the response
-    response_message = response.get('message', 'No message available')
+    if isinstance(response, tuple):
+        response_message = response[0].get('message', 'No message available')
+    else:
+        response_message = response.get('message', 'No message available')
     return jsonify({'message': response_message}), 200
 
 # HANDLE A BASIC CHAT REQUEST
