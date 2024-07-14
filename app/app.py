@@ -63,6 +63,9 @@ def process_question():
     # Return the result as JSON
     return jsonify({"message": result})
 
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
+
 @app.route('/api/vlm', methods=['POST'])
 def vlm_model():
     data = request.get_json()
@@ -158,7 +161,8 @@ def run_vlm_question(model, prompt, image):
     response_json = {'responses': responses}
 
     return response_json
-
+import subprocess
+import json
 
 def run_model_question(question, model):
     try:
@@ -177,8 +181,10 @@ def run_model_question(question, model):
         
         # Check for error in the response
         if 'error' in response_json:
-            print(f"Model error: {response_json['error']}")
-            return {'responses': [], 'error': response_json['error']}
+            error_message = response_json['error']
+            if "model requires more system memory" in error_message:
+                error_message = f"The model '{model}' requires more system memory than is available."
+            return {'responses': [], 'error': error_message}
         
         responses = response_json.get("response", [])
         return {'responses': responses}
@@ -192,8 +198,6 @@ def run_model_question(question, model):
     except Exception as e:
         print(f"Unexpected error: {e}")
         return {'responses': [], 'error': str(e)}
-
-
 
 def working_directory():
     
