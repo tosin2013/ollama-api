@@ -57,7 +57,7 @@ def process_question():
     print(f"Model response: {result}")
 
     if 'error' in result:
-        return jsonify({"message": result, "error": result['error']}), 500
+        return jsonify({"message": result['responses'], "error": result['error']}), 500
 
     return jsonify({"message": result})
 
