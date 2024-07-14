@@ -488,7 +488,7 @@ def process_model_request(model, message):
     if model_name == 'llama2':
         return post_to_valdi('llama2', message, model_spec)
     elif model_name == 'llama3':
-        return post_to_valdi('llama3', message, model_spec)
+        return post_to_valdi('llama3', message)
     elif model_name == 'mistral':
         return post_to_valdi('mistral', message, model_spec)
     elif model_name == 'vlm':
