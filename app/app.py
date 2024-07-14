@@ -56,8 +56,12 @@ def process_question():
     result = run_model_question(question, model)
     print(result)
 
+    # Check for errors in the result
+    if 'error' in result:
+        return jsonify({"message": result['responses'], "error": result['error']}), 500
+
     # Return the result as JSON
-    return jsonify({"message":result})
+    return jsonify({"message": result})
 
 @app.route('/api/vlm', methods=['POST'])
 def vlm_model():
@@ -156,19 +160,39 @@ def run_vlm_question(model, prompt, image):
     return response_json
 
 def run_model_question(question, model):
-    # Define the curl command
-    curl_command = f'curl http://localhost:11434/api/generate -d \'{{"model": "{model}", "prompt": "{question}"}}\''
+    try:
+        # Construct the curl command
+        curl_command = f"curl -s -X POST http://localhost:11434/api/generate -H 'Content-Type: application/json' -d '{{\"model\": \"{model}\", \"prompt\": \"{question}\"}}'"
 
-    # Run the command and capture the output
-    output = subprocess.check_output(curl_command, shell=True, encoding='utf-8')
+        print(f"Executing curl command: {curl_command}")
+        
+        # Execute the curl command
+        output = subprocess.check_output(curl_command, shell=True, encoding='utf-8')
+        
+        print(f"Curl command output: {output}")
 
-    # Process the output as JSON and extract "response" values
-    responses = [json.loads(response)["response"] for response in output.strip().split('\n')]
-
-    # Create a JSON containing only "response" values
-    response_json = {'responses': responses}
-
-    return response_json
+        # Process the output as JSON
+        response_json = json.loads(output)
+        
+        # Check for error in the response
+        if 'error' in response_json:
+            error_message = response_json['error']
+            if "model requires more system memory" in error_message:
+                error_message = f"The model '{model}' requires more system memory than is available."
+            return {'responses': [], 'error': error_message}
+        
+        responses = response_json.get("response", [])
+        return {'responses': responses}
+    
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing curl command: {e.output}")
+        return {'responses': [], 'error': str(e)}
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON response: {e}")
+        return {'responses': [], 'error': str(e)}
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return {'responses': [], 'error': str(e)}
 
 def working_directory():
     
