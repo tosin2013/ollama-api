@@ -162,7 +162,6 @@ def run_vlm_question(model, prompt, image):
 
     return response_json
 
-
 def run_model_question(question, model):
     try:
         # Construct the curl command
