@@ -433,7 +433,7 @@ def chat():
         # Error responses will be a tuple with (response, status_code)
         return jsonify(response[0]), response[1]
 
-    return response, 200
+    return jsonify(response), 200
 
 # HANDLE A BASIC CHAT REQUEST
 @app.route('/api/llava', methods=['POST'])
@@ -459,11 +459,9 @@ def llavaChat():
           data=json.dumps({'prompt':message, 'model':model, 'image': [image]})
       )
       response.raise_for_status()
-      return response.json()
+      return jsonify(response.json()), 200
     except requests.RequestException as e:
-      return {"error": str(e)}, 500
-
-    return response, 200
+      return jsonify({"error": str(e)}), 500
 
 # PROCESS THAT ACTS AS A PROXY TO CHAT REQUESTS
 def process_model_request(model, message):
