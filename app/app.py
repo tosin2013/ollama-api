@@ -54,20 +54,26 @@ def process_question():
         question = data.get('question', '')
         model = data.get('model', '')
 
+        # Log the received question and model
+        app.logger.info(f"Received question: {question} for model: {model}")
+
         # Run a command and capture the output
         result = run_model_question(question, model)
-        print(result)
+        app.logger.info(f"Model response: {result}")
 
         # Check for errors in the result
         if 'error' in result:
+            app.logger.error(f"Error in model response: {result['error']}")
             raise ValueError(result['error'])
 
         # Return the result as JSON
         return jsonify({"message": result})
 
     except ValueError as ve:
+        app.logger.error(f"ValueError: {str(ve)}")
         return jsonify({"message": str(ve)})
     except Exception as e:
+        app.logger.error(f"Unexpected error: {str(e)}")
         return jsonify({"message": "An unexpected error occurred."}), 500
 
 
@@ -172,12 +178,12 @@ def run_model_question(question, model):
         # Construct the curl command
         curl_command = f"curl -s -X POST http://localhost:11434/api/generate -H 'Content-Type: application/json' -d '{{\"model\": \"{model}\", \"prompt\": \"{question}\"}}'"
 
-        print(f"Executing curl command: {curl_command}")
+        app.logger.info(f"Executing curl command: {curl_command}")
         
         # Execute the curl command
         output = subprocess.check_output(curl_command, shell=True, encoding='utf-8')
         
-        print(f"Curl command output: {output}")
+        app.logger.info(f"Curl command output: {output}")
 
         # Process the output as JSON
         response_json = json.loads(output)
@@ -187,19 +193,20 @@ def run_model_question(question, model):
             error_message = response_json['error']
             if "model requires more system memory" in error_message:
                 error_message = f"The model '{model}' requires more system memory than is available."
+            app.logger.error(f"Error in model response: {error_message}")
             return {'responses': [], 'error': error_message}
         
         responses = response_json.get("response", [])
         return {'responses': responses}
     
     except subprocess.CalledProcessError as e:
-        print(f"Error executing curl command: {e.output}")
+        app.logger.error(f"Error executing curl command: {e.output}")
         return {'responses': [], 'error': str(e)}
     except json.JSONDecodeError as e:
-        print(f"Error decoding JSON response: {e}")
+        app.logger.error(f"Error decoding JSON response: {e}")
         return {'responses': [], 'error': str(e)}
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        app.logger.error(f"Unexpected error: {e}")
         return {'responses': [], 'error': str(e)}
 
 def working_directory():
