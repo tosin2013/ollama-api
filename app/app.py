@@ -57,7 +57,7 @@ def process_question():
     print(result)
 
     # Return the result as JSON
-    return result
+    return jsonify({"message":result})
 
 @app.route('/api/vlm', methods=['POST'])
 def vlm_model():
@@ -69,7 +69,7 @@ def vlm_model():
     result = run_vlm_question(model, prompt, image)
 
     # Return the result as a JSON
-    return result
+    return jsonify({"message":result})
 
 @app.route('/api/pull', methods=['POST'])
 def pull_model():
@@ -79,7 +79,7 @@ def pull_model():
     result = run_pull_model(model)
     print(result)
 
-    return result
+    return jsonify({"message":result})
 
 # change to post if it doesnt work. some intermediaries block json body when attatched to a DELETE
 @app.route('/api/delete', methods=['DELETE']) 
@@ -90,7 +90,7 @@ def delete_model():
     result = run_delete_model(model)
     print(result)
 
-    return result
+    return jsonify({"message":result})
 
 @app.route('/api/install', methods=['GET'])
 def install():
@@ -112,10 +112,7 @@ def listModels():
 def listInstalledModels():
     curl_command = f'curl http://localhost:11434/api/tags'
 
-    try:
-        output = subprocess.check_output(curl_command, shell=True, encoding='utf-8')
-    except subprocess.CalledProcessError as e:
-        return {"error": f"Command '{curl_command}' returned non-zero exit status {e.returncode}"}
+    output = subprocess.check_output(curl_command, shell=True, encoding='utf-8')
     res = json.loads(output)
 
     return res
@@ -166,12 +163,7 @@ def run_model_question(question, model):
     output = subprocess.check_output(curl_command, shell=True, encoding='utf-8')
 
     # Process the output as JSON and extract "response" values
-    responses = []
-    for response in output.strip().split('\n'):
-        try:
-            responses.append(json.loads(response)["response"])
-        except KeyError:
-            print(f"KeyError: 'response' not found in {response}")
+    responses = [json.loads(response)["response"] for response in output.strip().split('\n')]
 
     # Create a JSON containing only "response" values
     response_json = {'responses': responses}
@@ -441,7 +433,7 @@ def chat():
         # Error responses will be a tuple with (response, status_code)
         return jsonify(response[0]), response[1]
 
-    return jsonify(response), 200
+    return response, 200
 
 # HANDLE A BASIC CHAT REQUEST
 @app.route('/api/llava', methods=['POST'])
@@ -467,9 +459,11 @@ def llavaChat():
           data=json.dumps({'prompt':message, 'model':model, 'image': [image]})
       )
       response.raise_for_status()
-      return jsonify(response.json()), 200
+      return response.json()
     except requests.RequestException as e:
-      return jsonify({"error": str(e)}), 500
+      return {"error": str(e)}, 500
+
+    return response, 200
 
 # PROCESS THAT ACTS AS A PROXY TO CHAT REQUESTS
 def process_model_request(model, message):
@@ -487,18 +481,12 @@ def process_model_request(model, message):
 
     if model == 'llama2':
         return post_to_valdi('llama2', message)
+    elif model == 'llama3':
+        return post_to_valdi('llama3', message)
     elif model == 'mistral':
         return post_to_valdi('mistral', message)
     elif model == 'vlm':
         return post_to_valdi('vlm', message)
-    elif model == 'llama3:70b':
-        try:
-            response = post_to_valdi('llama3:70b', message)
-            if 'error' in response:
-                return response, 500
-            return response
-        except Exception as e:
-            return {"error": f"Error processing 'llama3:70b' model: {e}"}, 500
     else:
         try:
             response = requests.post(
@@ -594,7 +582,7 @@ def install_model():
             return jsonify({'error': 'Model name is required'}), 400
         install_url = f"{VALDI_ENDPOINT}/api/pull"
         response = requests.post(install_url, json={'model': model_name})
-        result = response.json().get('message', 'No message found in response')
+        result = response.json().get('message')
         return result
     except Exception as error:
         return jsonify({'error': str(error)}), 500
