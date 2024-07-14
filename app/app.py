@@ -488,7 +488,10 @@ def process_model_request(model, message):
     if model_name == 'llama2':
         return post_to_valdi('llama2', message)
     elif model_name == 'llama3':
-        return post_to_valdi('llama3', message)
+        print(f"Processing 'llama3' model with message: {message}")
+        response = post_to_valdi('llama3', message)
+        print(f"Response from 'llama3' model: {response}")
+        return response
     elif model_name == 'mistral':
         return post_to_valdi('mistral', message)
     elif model_name == 'vlm':
