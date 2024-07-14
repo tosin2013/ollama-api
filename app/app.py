@@ -166,7 +166,12 @@ def run_model_question(question, model):
     output = subprocess.check_output(curl_command, shell=True, encoding='utf-8')
 
     # Process the output as JSON and extract "response" values
-    responses = [json.loads(response)["response"] for response in output.strip().split('\n')]
+    responses = []
+    for response in output.strip().split('\n'):
+        try:
+            responses.append(json.loads(response)["response"])
+        except KeyError:
+            print(f"KeyError: 'response' not found in {response}")
 
     # Create a JSON containing only "response" values
     response_json = {'responses': responses}
