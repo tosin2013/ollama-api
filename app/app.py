@@ -112,7 +112,10 @@ def listModels():
 def listInstalledModels():
     curl_command = f'curl http://localhost:11434/api/tags'
 
-    output = subprocess.check_output(curl_command, shell=True, encoding='utf-8')
+    try:
+        output = subprocess.check_output(curl_command, shell=True, encoding='utf-8')
+    except subprocess.CalledProcessError as e:
+        return {"error": f"Command '{curl_command}' returned non-zero exit status {e.returncode}"}
     res = json.loads(output)
 
     return res
