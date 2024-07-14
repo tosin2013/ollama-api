@@ -594,7 +594,7 @@ def install_model():
             return jsonify({'error': 'Model name is required'}), 400
         install_url = f"{VALDI_ENDPOINT}/api/pull"
         response = requests.post(install_url, json={'model': model_name})
-        result = response.json().get('message')
+        result = response.json().get('message', 'No message found in response')
         return result
     except Exception as error:
         return jsonify({'error': str(error)}), 500
