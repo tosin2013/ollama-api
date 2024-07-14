@@ -161,8 +161,7 @@ def run_vlm_question(model, prompt, image):
     response_json = {'responses': responses}
 
     return response_json
-import subprocess
-import json
+
 
 def run_model_question(question, model):
     try:
