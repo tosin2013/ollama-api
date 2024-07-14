@@ -479,14 +479,20 @@ def process_model_request(model, message):
         except requests.RequestException as e:
             return {"error": str(e)}, 500
 
-    if model == 'llama2':
-        return post_to_valdi('llama2', message)
-    elif model == 'llama3':
-        return post_to_valdi('llama3', message)
-    elif model == 'mistral':
-        return post_to_valdi('mistral', message)
-    elif model == 'vlm':
-        return post_to_valdi('vlm', message)
+    # Split the model name and its version/specification
+    model_parts = model.split(':')
+    model_name = model_parts[0]
+    model_spec = model_parts[1] if len(model_parts) > 1 else None
+
+    # Route the request based on the model name
+    if model_name == 'llama2':
+        return post_to_valdi('llama2', message, model_spec)
+    elif model_name == 'llama3':
+        return post_to_valdi('llama3', message, model_spec)
+    elif model_name == 'mistral':
+        return post_to_valdi('mistral', message, model_spec)
+    elif model_name == 'vlm':
+        return post_to_valdi('vlm', message, model_spec)
     else:
         try:
             response = requests.post(
