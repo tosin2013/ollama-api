@@ -251,6 +251,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         'orca-mini',
         'vicuna',
         'llava',
+        'llama3:70b',
         'medllama2'
     ]
 
