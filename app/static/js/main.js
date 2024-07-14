@@ -81,9 +81,13 @@ document.addEventListener('DOMContentLoaded', async function() {
             });
 
             const data = await response.json();
-            var resArr = data.message.responses
-            var resStr = resArr.join(' ')
-            chatArea.innerHTML += `<p class="botMessage">${resStr}</p>`;
+            if (data.message && data.message.responses) {
+              var resArr = data.message.responses;
+              var resStr = resArr.join(' ');
+              chatArea.innerHTML += `<p class="botMessage">${resStr}</p>`;
+            } else {
+              chatArea.innerHTML += `<p class="botMessage">No response received</p>`;
+            }
             scrollToBottom();
           } catch (error) {
             console.log(error);
@@ -180,9 +184,13 @@ document.addEventListener('DOMContentLoaded', async function() {
       });
 
       const data = await response.json();
-      var resArr = data.message.responses
-      var resStr = resArr
-      chatArea.innerHTML += `<p class="botMessage">${resStr}</p>`;
+      if (data.message && data.message.responses) {
+        var resArr = data.message.responses;
+        var resStr = resArr.join(' ');
+        chatArea.innerHTML += `<p class="botMessage">${resStr}</p>`;
+      } else {
+        chatArea.innerHTML += `<p class="botMessage">No response received</p>`;
+      }
       scrollToBottom();
     } catch (error) {
       console.log(error);
