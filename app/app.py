@@ -483,6 +483,8 @@ def process_model_request(model, message):
         return post_to_valdi('mistral', message)
     elif model == 'vlm':
         return post_to_valdi('vlm', message)
+    elif model == 'llama3:70b':
+        return post_to_valdi('llama3:70b', message)
     else:
         try:
             response = requests.post(
