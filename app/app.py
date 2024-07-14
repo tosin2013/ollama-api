@@ -66,9 +66,9 @@ def process_question():
         return jsonify({"message": result}), 200
 
     except ValueError as ve:
-        return jsonify({"message": [], "error": str(ve)}), 400
+        return jsonify({"message": str(ve)}), 400
     except Exception as e:
-        return jsonify({"message": [], "error": "An unexpected error occurred."}), 500
+        return jsonify({"message": "An unexpected error occurred."}), 500
 
 
 @app.route('/api/vlm', methods=['POST'])
