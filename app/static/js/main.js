@@ -315,6 +315,9 @@ document.addEventListener('DOMContentLoaded', async function() {
       case 'llama2:70b':
           presentedName = 'Llama 2 (70B)'
         break;
+      case 'llama3:70b':
+          presentedName = 'Llama 3 (70B)'
+        break;
       case 'orca-mini':
          presentedName = 'Orca Mini'
         break;
