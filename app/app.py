@@ -47,20 +47,21 @@ def index():
 
 @app.route('/api/question', methods=['POST'])
 def process_question():
+    # Get the question from the request
     data = request.get_json()
     question = data.get('question', '')
     model = data.get('model', '')
-    
-    print(f"Received question: {question} for model: {model}")
 
+    # Run a command and capture the output
     result = run_model_question(question, model)
-    print(f"Model response: {result}")
+    print(result)
 
+    # Check for errors in the result
     if 'error' in result:
         return jsonify({"message": result['responses'], "error": result['error']}), 500
 
+    # Return the result as JSON
     return jsonify({"message": result})
-
 
 @app.route('/api/vlm', methods=['POST'])
 def vlm_model():
