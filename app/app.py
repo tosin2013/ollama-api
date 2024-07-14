@@ -496,8 +496,8 @@ def process_model_request(model, message):
     # Route the request based on the model name
     if model_name == 'llama2':
         return post_to_valdi('llama2', message)
-    elif model_name == 'llama3':
-        return post_to_valdi('llama3', message)
+    elif model == 'llama3:70b':
+        return post_to_valdi('llama3:70b', message)
     elif model_name == 'mistral':
         return post_to_valdi('mistral', message)
     elif model_name == 'vlm':
