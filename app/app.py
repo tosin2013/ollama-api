@@ -56,6 +56,9 @@ def process_question():
     result = run_model_question(question, model)
     print(f"Model response: {result}")
 
+    if 'error' in result:
+        return jsonify({"message": result, "error": result['error']}), 500
+
     return jsonify({"message": result})
 
 
@@ -168,19 +171,27 @@ def run_model_question(question, model):
         
         print(f"Curl command output: {output}")
 
-        # Process the output as JSON and extract "response" values
-        responses = [json.loads(response).get("response", "") for response in output.strip().split('\n') if response]
+        # Process the output as JSON
+        response_json = json.loads(output)
         
-        response_json = {'responses': responses}
-
-        return response_json
+        # Check for error in the response
+        if 'error' in response_json:
+            print(f"Model error: {response_json['error']}")
+            return {'responses': [], 'error': response_json['error']}
+        
+        responses = response_json.get("response", [])
+        return {'responses': responses}
     
     except subprocess.CalledProcessError as e:
         print(f"Error executing curl command: {e.output}")
-        return {'responses': []}
+        return {'responses': [], 'error': str(e)}
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON response: {e}")
-        return {'responses': []}
+        return {'responses': [], 'error': str(e)}
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return {'responses': [], 'error': str(e)}
+
 
 
 def working_directory():
