@@ -47,17 +47,17 @@ def index():
 
 @app.route('/api/question', methods=['POST'])
 def process_question():
-    # Get the question from the request
     data = request.get_json()
     question = data.get('question', '')
     model = data.get('model', '')
+    
+    print(f"Received question: {question} for model: {model}")
 
-    # Run a command and capture the output
     result = run_model_question(question, model)
-    print(result)
+    print(f"Model response: {result}")
 
-    # Return the result as JSON
-    return jsonify({"message":result})
+    return jsonify({"message": result})
+
 
 @app.route('/api/vlm', methods=['POST'])
 def vlm_model():
@@ -155,29 +155,33 @@ def run_vlm_question(model, prompt, image):
 
     return response_json
 
+
 def run_model_question(question, model):
-    # Define the curl command
-    curl_command = f'curl http://localhost:11434/api/generate -d \'{{"model": "{model}", "prompt": "{question}"}}\''
+    try:
+        # Construct the curl command
+        curl_command = f"curl -s -X POST http://localhost:11434/api/generate -H 'Content-Type: application/json' -d '{{\"model\": \"{model}\", \"prompt\": \"{question}\"}}'"
 
-    # Run the command and capture the output
-    output = subprocess.check_output(curl_command, shell=True, encoding='utf-8')
+        print(f"Executing curl command: {curl_command}")
+        
+        # Execute the curl command
+        output = subprocess.check_output(curl_command, shell=True, encoding='utf-8')
+        
+        print(f"Curl command output: {output}")
 
-    # Process the output as JSON and extract "response" values
-    responses = []
-    for response_line in output.strip().split('\n'):
-        try:
-            response_json = json.loads(response_line)
-            if 'response' in response_json:
-                responses.append(response_json["response"])
-            else:
-                print(f"KeyError: 'response' not found in {response_json}")
-        except json.JSONDecodeError as e:
-            print(f"JSONDecodeError: {e} for line {response_line}")
+        # Process the output as JSON and extract "response" values
+        responses = [json.loads(response).get("response", "") for response in output.strip().split('\n') if response]
+        
+        response_json = {'responses': responses}
 
-    # Create a JSON containing only "response" values
-    response_json = {'responses': responses}
+        return response_json
+    
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing curl command: {e.output}")
+        return {'responses': []}
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON response: {e}")
+        return {'responses': []}
 
-    return response_json
 
 def working_directory():
     
