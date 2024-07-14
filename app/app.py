@@ -11,6 +11,7 @@ import torch
 import diffusers
 import os
 
+# new 
 
 app = Flask(__name__)
 
@@ -457,12 +458,7 @@ def chat():
         # Error responses will be a tuple with (response, status_code)
         return jsonify(response[0]), response[1]
 
-    # Ensure 'message' exists in the response
-    if isinstance(response, tuple):
-        response_message = response[0].get('message', 'No message available')
-    else:
-        response_message = response.get('message', 'No message available')
-    return jsonify({'message': response_message}), 200
+    return response, 200
 
 # HANDLE A BASIC CHAT REQUEST
 @app.route('/api/llava', methods=['POST'])
