@@ -63,10 +63,10 @@ def process_question():
             raise ValueError(result['error'])
 
         # Return the result as JSON
-        return jsonify({"message": result}), 200
+        return jsonify({"message": result})
 
     except ValueError as ve:
-        return jsonify({"message": str(ve)}), 400
+        return jsonify({"message": str(ve)})
     except Exception as e:
         return jsonify({"message": "An unexpected error occurred."}), 500
 
