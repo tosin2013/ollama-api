@@ -50,7 +50,7 @@ if [ -z "$1" ]; then
 fi
 
 # Define variables
-REPO_URL="https://github.com/Dublit-Development/ollama-api"
+REPO_URL="https://github.com/tosin2013/ollama-api"
 API_KEY="$1"
 CONFIG_FILE="./app/config.json"
 FLASK_APP="app.py"
