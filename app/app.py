@@ -57,7 +57,7 @@ def process_question():
     print(result)
 
     # Return the result as JSON
-    return jsonify({"message":result})
+    return result
 
 @app.route('/api/vlm', methods=['POST'])
 def vlm_model():
@@ -69,7 +69,7 @@ def vlm_model():
     result = run_vlm_question(model, prompt, image)
 
     # Return the result as a JSON
-    return jsonify({"message":result})
+    return result
 
 @app.route('/api/pull', methods=['POST'])
 def pull_model():
@@ -79,7 +79,7 @@ def pull_model():
     result = run_pull_model(model)
     print(result)
 
-    return jsonify({"message":result})
+    return result
 
 # change to post if it doesnt work. some intermediaries block json body when attatched to a DELETE
 @app.route('/api/delete', methods=['DELETE']) 
@@ -90,7 +90,7 @@ def delete_model():
     result = run_delete_model(model)
     print(result)
 
-    return jsonify({"message":result})
+    return result
 
 @app.route('/api/install', methods=['GET'])
 def install():
