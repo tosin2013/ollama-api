@@ -493,12 +493,12 @@ def process_model_request(model, message):
         return post_to_valdi('vlm', message)
     elif model == 'llama3:70b':
         try:
-            response = post_to_valdi('ollama/llama3:70b', message)
+            response = post_to_valdi('llama3:70b', message)
             if 'error' in response:
                 return response, 500
             return response
         except Exception as e:
-            return {"error": f"Error processing 'ollama/llama3:70b' model: {e}"}, 500
+            return {"error": f"Error processing 'llama3:70b' model: {e}"}, 500
     else:
         try:
             response = requests.post(
