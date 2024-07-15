@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', async function() {
               var resStr = resArr.join(' ');
               chatArea.innerHTML += `<p class="botMessage">${resStr}</p>`;
             } else {
-              chatArea.innerHTML += `<p class="botMessage">No response received. Please try again later or check your connection.</p>`;
+              chatArea.innerHTML += `<p class="botMessage">No response received. Please review the /opt/ollama-api/app/app.logs file for more details.</p>`;
             }
             scrollToBottom();
           } catch (error) {
